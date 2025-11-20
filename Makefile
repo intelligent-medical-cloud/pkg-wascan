@@ -5,9 +5,17 @@ init:
 lib-upd:
 	cargo update --verbose
 
-build:
+lint:
+	cargo clippy --all-targets --all-features -- -D warnings
+
+build: lint
 	@mkdir -p pkg
 	cargo build --release --target wasm32-unknown-unknown
 	wasm-bindgen --target web --out-dir pkg target/wasm32-unknown-unknown/release/wascan.wasm
 
-.PHONY: init lib-upd build
+test: build
+	@echo "Starting local server at http://localhost:8000/test"
+	python3 -m http.server
+	
+
+.PHONY: init lib-upd lint build test
