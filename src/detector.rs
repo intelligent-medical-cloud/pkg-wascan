@@ -14,14 +14,6 @@ use crate::{
 };
 
 pub fn detect_from_image(file: File) {
-    let mime = file.type_();
-    if !mime.starts_with("image/") {
-        invoke_on_detect(Err(&Error::NotImageFile));
-        invoke_on_stop();
-
-        return;
-    }
-
     let Ok(reader) = FileReader::new() else {
         invoke_on_detect(Err(&Error::Internal));
         invoke_on_stop();

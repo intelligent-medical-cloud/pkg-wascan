@@ -18,9 +18,6 @@ pub enum Error {
     #[error("ERR_INVALID_MIME")]
     InvalidMime,
 
-    #[error("ERR_NOT_IMAGE_FILE")]
-    NotImageFile,
-
     #[error("ERR_NOT_DETECTED")]
     NotDetected,
 
