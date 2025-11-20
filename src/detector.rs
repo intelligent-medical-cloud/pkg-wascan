@@ -1,11 +1,12 @@
-use std::io::Cursor;
+use std::{collections::HashSet, io::Cursor};
 
 use image::ImageReader;
 use js_sys::Uint8Array;
 use rxing::{
-    BinaryBitmap, Luma8LuminanceSource, Reader, common::HybridBinarizer, oned::UPCAReader,
+    BarcodeFormat, BinaryBitmap, DecodeHints, Luma8LuminanceSource, MultiFormatReader,
+    common::HybridBinarizer,
 };
-use wasm_bindgen::{JsCast, prelude::Closure};
+use wasm_bindgen::{JsCast, closure::Closure};
 use web_sys::{Event, File, FileReader};
 
 use crate::{
@@ -68,9 +69,19 @@ pub fn detect_from_image(file: File) {
             let src = Luma8LuminanceSource::new(gray.as_raw().to_vec(), w, h);
             let binarizer = HybridBinarizer::new(src);
             let mut bitmap = BinaryBitmap::new(binarizer);
-            let mut upca_reader = UPCAReader::default();
 
-            match upca_reader.decode(&mut bitmap) {
+            let mut reader = MultiFormatReader::default();
+            let mut formats = HashSet::with_capacity(2);
+            formats.insert(BarcodeFormat::UPC_A);
+            formats.insert(BarcodeFormat::QR_CODE);
+            let hints = DecodeHints {
+                PossibleFormats: Some(formats),
+                ..DecodeHints::default()
+            };
+            reader.set_hints(&hints);
+
+            match reader.decode_with_state(&mut bitmap) {
+                // TODO: results will be a tuple of code, type and maybe bounds
                 Ok(res) => invoke_on_detect(Ok(res.getText())),
                 Err(_) => invoke_on_detect(Err(&Error::NotDetected)),
             }
