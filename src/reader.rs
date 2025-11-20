@@ -65,7 +65,6 @@ pub fn init_reader(document: &Document, button: &Element) -> Result<(), JsValue>
             return;
         }
 
-        // Start async detection; detector will emit invoke_on_detect and invoke_on_stop upon completion
         detect_from_image(file);
     }) as Box<dyn FnMut(_)>);
     file_input

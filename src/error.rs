@@ -21,11 +21,8 @@ pub enum Error {
     #[error("ERR_NOT_IMAGE_FILE")]
     NotImageFile,
 
-    #[error("ERR_IMAGE_TOO_SMALL")]
-    ImageTooSmall,
-
-    #[error("ERR_DECODE_FAILED")]
-    DecodeFailed,
+    #[error("ERR_NOT_DETECTED")]
+    NotDetected,
 
     #[error("ERR_INTERNAL")]
     Internal,

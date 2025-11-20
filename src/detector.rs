@@ -6,7 +6,7 @@ use rxing::{
     BinaryBitmap, Luma8LuminanceSource, Reader, common::HybridBinarizer, oned::UPCAReader,
 };
 use wasm_bindgen::{JsCast, prelude::Closure};
-use web_sys::{File, FileReader};
+use web_sys::{Event, File, FileReader};
 
 use crate::{
     error::Error,
@@ -14,54 +14,62 @@ use crate::{
 };
 
 pub fn detect_from_image(file: File) {
-    // Validate MIME early (defensive; reader already filters)
     let mime = file.type_();
     if !mime.starts_with("image/") {
         invoke_on_detect(Err(&Error::NotImageFile));
+        invoke_on_stop();
+
         return;
     }
 
     let Ok(reader) = FileReader::new() else {
         invoke_on_detect(Err(&Error::Internal));
+        invoke_on_stop();
+
         return;
     };
 
-    // onload closure performs decode & detection
     let onload = {
         let reader_ref = reader.clone();
-        Closure::wrap(Box::new(move |_evt: web_sys::Event| {
-            let js_val = match reader_ref.result() {
-                Ok(v) => v,
-                Err(_) => {
-                    invoke_on_detect(Err(&Error::Internal));
-                    return;
-                }
+        Closure::wrap(Box::new(move |_evt: Event| {
+            let Ok(js_val) = reader_ref.result() else {
+                invoke_on_detect(Err(&Error::Internal));
+                invoke_on_stop();
+
+                return;
             };
+
             let array = Uint8Array::new(&js_val);
             let mut input_bytes = vec![0u8; array.length() as usize];
             array.copy_to(&mut input_bytes);
 
-            // Decode image safely
             let dyn_image = match ImageReader::new(Cursor::new(&input_bytes)).with_guessed_format()
             {
                 Ok(rdr) => match rdr.decode() {
                     Ok(img) => img,
                     Err(_) => {
-                        invoke_on_detect(Err(&Error::DecodeFailed));
+                        invoke_on_detect(Err(&Error::Internal));
+                        invoke_on_stop();
+
                         return;
                     }
                 },
                 Err(_) => {
-                    invoke_on_detect(Err(&Error::DecodeFailed));
+                    invoke_on_detect(Err(&Error::Internal));
+                    invoke_on_stop();
+
                     return;
                 }
             };
 
             let gray = dyn_image.to_luma8();
+            // TODO: img processing flexible logic
             let w = gray.width();
             let h = gray.height();
-            if w < 3 || h < 3 {
-                invoke_on_detect(Err(&Error::ImageTooSmall));
+            if w < 10 || h < 10 {
+                invoke_on_detect(Err(&Error::NotDetected));
+                invoke_on_stop();
+
                 return;
             }
 
@@ -72,18 +80,16 @@ pub fn detect_from_image(file: File) {
 
             match upca_reader.decode(&mut bitmap) {
                 Ok(res) => invoke_on_detect(Ok(res.getText())),
-                Err(_) => invoke_on_detect(Err(&Error::DecodeFailed)),
+                Err(_) => invoke_on_detect(Err(&Error::NotDetected)),
             }
 
-            // End of detection lifecycle
             invoke_on_stop();
         }) as Box<dyn FnMut(_)>)
     };
 
     reader.set_onload(Some(onload.as_ref().unchecked_ref()));
-    onload.forget(); // Leak closure to keep callback alive
+    onload.forget();
 
-    // Kick off async read
     if reader.read_as_array_buffer(&file).is_err() {
         invoke_on_detect(Err(&Error::Internal));
         invoke_on_stop();
