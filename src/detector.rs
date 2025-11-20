@@ -4,6 +4,7 @@ use image::ImageReader;
 use js_sys::Uint8Array;
 use rxing::{
     BinaryBitmap, Luma8LuminanceSource, Reader, common::HybridBinarizer, oned::UPCAReader,
+    qrcode::QRCodeReader,
 };
 use wasm_bindgen::{JsCast, prelude::Closure};
 use web_sys::{Event, File, FileReader};
@@ -69,10 +70,14 @@ pub fn detect_from_image(file: File) {
             let binarizer = HybridBinarizer::new(src);
             let mut bitmap = BinaryBitmap::new(binarizer);
             let mut upca_reader = UPCAReader::default();
+            let mut qr_reader = QRCodeReader::new();
 
-            match upca_reader.decode(&mut bitmap) {
-                Ok(res) => invoke_on_detect(Ok(res.getText())),
-                Err(_) => invoke_on_detect(Err(&Error::NotDetected)),
+            if let Ok(res) = upca_reader.decode(&mut bitmap) {
+                invoke_on_detect(Ok(res.getText()))
+            } else if let Ok(res) = qr_reader.decode(&mut bitmap) {
+                invoke_on_detect(Ok(res.getText()))
+            } else {
+                invoke_on_detect(Err(&Error::NotDetected))
             }
 
             invoke_on_stop();
