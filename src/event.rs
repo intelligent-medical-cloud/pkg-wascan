@@ -12,7 +12,6 @@ thread_local! {
     static ON_STOP: RefCell<Option<Function>> = const { RefCell::new(None) };
 }
 
-/// Invokes the on_start callback if one is registered.
 pub fn invoke_on_start() {
     ON_START.with(|slot| {
         if let Some(cb) = &*slot.borrow() {
@@ -68,7 +67,6 @@ pub fn invoke_on_detect(result: Result<&str, &Error>) {
     });
 }
 
-/// Invokes the on_stop callback if one is registered.
 pub fn invoke_on_stop() {
     ON_STOP.with(|slot| {
         if let Some(cb) = &*slot.borrow() {

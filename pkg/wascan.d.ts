@@ -21,6 +21,11 @@ export function on_detect(cb: Function): void;
  * WASM entry point
  */
 export function main_js(): void;
+/**
+ * Re-initializes the reader. Can be called from JavaScript/Vue lifecycle hooks
+ * if buttons are added dynamically after WASM initialization.
+ */
+export function reinit_reader(): void;
 export function error_codes(): any;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -31,15 +36,18 @@ export interface InitOutput {
   readonly on_start: (a: any) => void;
   readonly on_stop: (a: any) => void;
   readonly main_js: () => void;
+  readonly reinit_reader: () => [number, number];
   readonly error_codes: () => any;
+  readonly wasm_bindgen__convert__closures_____invoke__h126d758235dc3db2: (a: number, b: number) => void;
+  readonly wasm_bindgen__closure__destroy__hdf7a0ee1987079ab: (a: number, b: number) => void;
   readonly wasm_bindgen__convert__closures_____invoke__h94677a04d34e1036: (a: number, b: number, c: any) => void;
-  readonly wasm_bindgen__closure__destroy__hf60ad52692781b8a: (a: number, b: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;
   readonly __externref_table_alloc: () => number;
   readonly __wbindgen_externrefs: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+  readonly __externref_table_dealloc: (a: number) => void;
   readonly __wbindgen_start: () => void;
 }
 

@@ -18,7 +18,6 @@ use crate::{
 };
 
 const MIN_IMAGE_DIMENSION: u32 = 10;
-
 const RESIZE_FACTOR: u32 = 2;
 
 pub fn detect_from_image(file: File) {
