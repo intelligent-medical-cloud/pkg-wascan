@@ -208,12 +208,12 @@ export function error_codes() {
     return ret;
 }
 
-function wasm_bindgen__convert__closures_____invoke__h126d758235dc3db2(arg0, arg1) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h126d758235dc3db2(arg0, arg1);
-}
-
 function wasm_bindgen__convert__closures_____invoke__h94677a04d34e1036(arg0, arg1, arg2) {
     wasm.wasm_bindgen__convert__closures_____invoke__h94677a04d34e1036(arg0, arg1, arg2);
+}
+
+function wasm_bindgen__convert__closures_____invoke__h126d758235dc3db2(arg0, arg1) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h126d758235dc3db2(arg0, arg1);
 }
 
 const EXPECTED_RESPONSE_TYPES = new Set(['basic', 'cors', 'default']);

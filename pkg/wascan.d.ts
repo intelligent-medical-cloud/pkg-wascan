@@ -38,9 +38,9 @@ export interface InitOutput {
   readonly main_js: () => void;
   readonly reinit_reader: () => [number, number];
   readonly error_codes: () => any;
-  readonly wasm_bindgen__convert__closures_____invoke__h126d758235dc3db2: (a: number, b: number) => void;
-  readonly wasm_bindgen__closure__destroy__hdf7a0ee1987079ab: (a: number, b: number) => void;
   readonly wasm_bindgen__convert__closures_____invoke__h94677a04d34e1036: (a: number, b: number, c: any) => void;
+  readonly wasm_bindgen__closure__destroy__hdf7a0ee1987079ab: (a: number, b: number) => void;
+  readonly wasm_bindgen__convert__closures_____invoke__h126d758235dc3db2: (a: number, b: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;
   readonly __externref_table_alloc: () => number;
   readonly __wbindgen_externrefs: WebAssembly.Table;
