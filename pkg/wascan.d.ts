@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export function main_js(): void;
+export function error_codes(): any;
 export function on_start(cb: Function): void;
 export function on_stop(cb: Function): void;
 export function on_detect(cb: Function): void;
@@ -9,6 +10,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
+  readonly error_codes: () => any;
   readonly main_js: () => void;
   readonly on_detect: (a: any) => void;
   readonly on_start: (a: any) => void;

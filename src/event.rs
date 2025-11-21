@@ -1,10 +1,10 @@
 use std::cell::RefCell;
 
-use js_sys::{Error as JsError, Function};
+use js_sys::Function;
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 use web_sys::console;
 
-use crate::error::Error;
+use crate::error::{self, Error};
 
 thread_local! {
     static ON_START: RefCell<Option<Function>> = const { RefCell::new(None) };
@@ -26,7 +26,7 @@ pub fn invoke_on_start() {
 pub fn invoke_on_detect(result: Result<&str, &Error>) {
     let cb_arg = match result {
         Ok(v) => JsValue::from_str(v),
-        Err(e) => JsError::new(&e.to_string()).into(),
+        Err(e) => error::error_to_js(e),
     };
 
     ON_DETECT.with(|slot| {

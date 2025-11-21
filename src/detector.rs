@@ -1,6 +1,9 @@
 use std::io::Cursor;
 
-use image::ImageReader;
+use image::{
+    ImageReader,
+    imageops::{FilterType, resize},
+};
 use js_sys::Uint8Array;
 use rxing::{
     BinaryBitmap, Luma8LuminanceSource, Reader, common::HybridBinarizer, oned::UPCAReader,
@@ -57,16 +60,17 @@ pub fn detect_from_image(file: File) {
 
             let gray = dyn_image.to_luma8();
             // TODO: img processing flexible logic
-            let w = gray.width();
-            let h = gray.height();
+            let w = gray.width() / 2;
+            let h = gray.height() / 2;
             if w < 10 || h < 10 {
                 invoke_on_detect(Err(&Error::NotDetected));
                 invoke_on_stop();
 
                 return;
             }
+            let gray_resized = resize(&gray, w, h, FilterType::Lanczos3);
 
-            let src = Luma8LuminanceSource::new(gray.as_raw().to_vec(), w, h);
+            let src = Luma8LuminanceSource::new(gray_resized.as_raw().to_vec(), w, h);
             let binarizer = HybridBinarizer::new(src);
             let mut bitmap = BinaryBitmap::new(binarizer);
             let mut upca_reader = UPCAReader::default();

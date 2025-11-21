@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
+export const error_codes: () => any;
 export const main_js: () => void;
 export const on_detect: (a: any) => void;
 export const on_start: (a: any) => void;
