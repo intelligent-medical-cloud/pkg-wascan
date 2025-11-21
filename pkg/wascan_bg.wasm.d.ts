@@ -1,11 +1,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
-export const error_codes: () => any;
-export const main_js: () => void;
 export const on_detect: (a: any) => void;
 export const on_start: (a: any) => void;
 export const on_stop: (a: any) => void;
+export const main_js: () => void;
+export const error_codes: () => any;
 export const wasm_bindgen__convert__closures_____invoke__h94677a04d34e1036: (a: number, b: number, c: any) => void;
 export const wasm_bindgen__closure__destroy__hf60ad52692781b8a: (a: number, b: number) => void;
 export const __wbindgen_exn_store: (a: number) => void;

@@ -1,20 +1,37 @@
 /* tslint:disable */
 /* eslint-disable */
+/**
+ * Registers a callback function to be called when scanning starts.
+ */
+export function on_start(cb: Function): void;
+/**
+ * Registers a callback function to be called when scanning stops.
+ */
+export function on_stop(cb: Function): void;
+/**
+ * Registers a callback function to be called when a barcode is detected.
+ *
+ * The callback receives an object with:
+ * - `success: boolean` - true if detection succeeded, false otherwise
+ * - `value?: string` - the detected barcode (only present if success is true)
+ * - `error?: string` - the error code (only present if success is false)
+ */
+export function on_detect(cb: Function): void;
+/**
+ * WASM entry point
+ */
 export function main_js(): void;
 export function error_codes(): any;
-export function on_start(cb: Function): void;
-export function on_stop(cb: Function): void;
-export function on_detect(cb: Function): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly error_codes: () => any;
-  readonly main_js: () => void;
   readonly on_detect: (a: any) => void;
   readonly on_start: (a: any) => void;
   readonly on_stop: (a: any) => void;
+  readonly main_js: () => void;
+  readonly error_codes: () => any;
   readonly wasm_bindgen__convert__closures_____invoke__h94677a04d34e1036: (a: number, b: number, c: any) => void;
   readonly wasm_bindgen__closure__destroy__hf60ad52692781b8a: (a: number, b: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;

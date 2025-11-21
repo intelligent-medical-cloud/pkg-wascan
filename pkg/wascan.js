@@ -148,7 +148,38 @@ function makeMutClosure(arg0, arg1, dtor, f) {
     CLOSURE_DTORS.register(real, state, state);
     return real;
 }
+/**
+ * Registers a callback function to be called when scanning starts.
+ * @param {Function} cb
+ */
+export function on_start(cb) {
+    wasm.on_start(cb);
+}
 
+/**
+ * Registers a callback function to be called when scanning stops.
+ * @param {Function} cb
+ */
+export function on_stop(cb) {
+    wasm.on_stop(cb);
+}
+
+/**
+ * Registers a callback function to be called when a barcode is detected.
+ *
+ * The callback receives an object with:
+ * - `success: boolean` - true if detection succeeded, false otherwise
+ * - `value?: string` - the detected barcode (only present if success is true)
+ * - `error?: string` - the error code (only present if success is false)
+ * @param {Function} cb
+ */
+export function on_detect(cb) {
+    wasm.on_detect(cb);
+}
+
+/**
+ * WASM entry point
+ */
 export function main_js() {
     wasm.main_js();
 }
@@ -159,27 +190,6 @@ export function main_js() {
 export function error_codes() {
     const ret = wasm.error_codes();
     return ret;
-}
-
-/**
- * @param {Function} cb
- */
-export function on_start(cb) {
-    wasm.on_start(cb);
-}
-
-/**
- * @param {Function} cb
- */
-export function on_stop(cb) {
-    wasm.on_stop(cb);
-}
-
-/**
- * @param {Function} cb
- */
-export function on_detect(cb) {
-    wasm.on_detect(cb);
 }
 
 function wasm_bindgen__convert__closures_____invoke__h94677a04d34e1036(arg0, arg1, arg2) {
@@ -400,8 +410,8 @@ function __wbg_get_imports() {
         const ret = getStringFromWasm0(arg0, arg1);
         return ret;
     };
-    imports.wbg.__wbindgen_cast_eee6ec14835383ca = function(arg0, arg1) {
-        // Cast intrinsic for `Closure(Closure { dtor_idx: 330, function: Function { arguments: [NamedExternref("Event")], shim_idx: 331, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+    imports.wbg.__wbindgen_cast_5b31cb85c3b03dfa = function(arg0, arg1) {
+        // Cast intrinsic for `Closure(Closure { dtor_idx: 362, function: Function { arguments: [NamedExternref("Event")], shim_idx: 363, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
         const ret = makeMutClosure(arg0, arg1, wasm.wasm_bindgen__closure__destroy__hf60ad52692781b8a, wasm_bindgen__convert__closures_____invoke__h94677a04d34e1036);
         return ret;
     };

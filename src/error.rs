@@ -2,8 +2,9 @@ use js_sys::{Object, Reflect};
 use thiserror::Error;
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 
+/// Error types for the wascan library.
 #[allow(clippy::enum_variant_names)]
-#[derive(Debug, Error)]
+#[derive(Debug, Error, Clone, Copy)]
 pub enum Error {
     #[error("ERR_NO_WINDOW")]
     WindowNotFound,
@@ -27,42 +28,60 @@ pub enum Error {
     Internal,
 }
 
+impl Error {
+    pub fn code(&self) -> &'static str {
+        match self {
+            Error::WindowNotFound => "ERR_NO_WINDOW",
+            Error::DocumentNotFound => "ERR_NO_DOCUMENT",
+            Error::TriggerButtonsNotFound => "ERR_NO_TRIGGER_BUTTONS",
+            Error::NoFileSelected => "ERR_NO_FILE_SELECTED",
+            Error::InvalidMime => "ERR_INVALID_MIME",
+            Error::NotDetected => "ERR_NOT_DETECTED",
+            Error::Internal => "ERR_INTERNAL",
+        }
+    }
+}
+
+impl From<Error> for JsValue {
+    fn from(error: Error) -> Self {
+        JsValue::from_str(error.code())
+    }
+}
+
+fn set_str(obj: &Object, key: &str, value: &str) -> Result<(), JsValue> {
+    Reflect::set(obj, &JsValue::from_str(key), &JsValue::from_str(value))
+        .map_err(|_| JsValue::from_str("Failed to set property"))
+        .and_then(|success| {
+            if success {
+                Ok(())
+            } else {
+                Err(JsValue::from_str("Failed to set property"))
+            }
+        })
+}
+
 #[wasm_bindgen]
 pub fn error_codes() -> JsValue {
     let obj = Object::new();
-    set_str(
-        &obj,
-        "WindowNotFound",
-        Error::WindowNotFound.to_string().as_str(),
-    );
-    set_str(
-        &obj,
-        "DocumentNotFound",
-        Error::DocumentNotFound.to_string().as_str(),
-    );
-    set_str(
-        &obj,
-        "TriggerButtonsNotFound",
-        Error::TriggerButtonsNotFound.to_string().as_str(),
-    );
-    set_str(
-        &obj,
-        "NoFileSelected",
-        Error::NoFileSelected.to_string().as_str(),
-    );
-    set_str(&obj, "InvalidMime", Error::InvalidMime.to_string().as_str());
-    set_str(&obj, "NotDetected", Error::NotDetected.to_string().as_str());
-    set_str(&obj, "Internal", Error::Internal.to_string().as_str());
+    let errors = [
+        ("WindowNotFound", Error::WindowNotFound),
+        ("DocumentNotFound", Error::DocumentNotFound),
+        ("TriggerButtonsNotFound", Error::TriggerButtonsNotFound),
+        ("NoFileSelected", Error::NoFileSelected),
+        ("InvalidMime", Error::InvalidMime),
+        ("NotDetected", Error::NotDetected),
+        ("Internal", Error::Internal),
+    ];
+
+    for (key, error) in errors {
+        if set_str(&obj, key, error.code()).is_err() {
+            continue;
+        }
+    }
 
     obj.into()
 }
 
 pub fn error_to_js(error: &Error) -> JsValue {
-    let obj = Object::new();
-    set_str(&obj, "message", &error.to_string());
-    obj.into()
-}
-
-fn set_str(obj: &Object, key: &str, value: &str) {
-    let _ = Reflect::set(obj, &JsValue::from_str(key), &JsValue::from_str(value));
+    JsValue::from(*error)
 }

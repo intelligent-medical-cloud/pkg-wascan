@@ -9,6 +9,16 @@ use crate::{
 
 const HIDDEN_FILE_INPUT_ID: &str = "wascan-file-input";
 
+/// Helper function to handle detection errors consistently.
+fn handle_detection_error(error: Error) {
+    invoke_on_detect(Err(&error));
+    invoke_on_stop();
+}
+
+/// Initializes the file reader for image-based barcode detection.
+///
+/// Sets up a hidden file input element and connects it to the provided button.
+/// When a file is selected, it will be processed for barcode detection.
 pub fn init_reader(document: &Document, button: &Element) -> Result<(), JsValue> {
     let existing = document.get_element_by_id(HIDDEN_FILE_INPUT_ID);
     let file_input = if let Some(el) = existing {
@@ -31,37 +41,27 @@ pub fn init_reader(document: &Document, button: &Element) -> Result<(), JsValue>
         invoke_on_start();
 
         let Some(input_el) = document_for_change.get_element_by_id(HIDDEN_FILE_INPUT_ID) else {
-            invoke_on_detect(Err(&Error::Internal));
-            invoke_on_stop();
-
+            handle_detection_error(Error::Internal);
             return;
         };
 
         let Ok(input_html) = input_el.dyn_into::<HtmlInputElement>() else {
-            invoke_on_detect(Err(&Error::Internal));
-            invoke_on_stop();
-
+            handle_detection_error(Error::Internal);
             return;
         };
 
         let Some(files) = input_html.files() else {
-            invoke_on_detect(Err(&Error::NoFileSelected));
-            invoke_on_stop();
-
+            handle_detection_error(Error::NoFileSelected);
             return;
         };
 
         let Some(file) = files.get(0) else {
-            invoke_on_detect(Err(&Error::NoFileSelected));
-            invoke_on_stop();
-
+            handle_detection_error(Error::NoFileSelected);
             return;
         };
 
         if !file.type_().starts_with("image/") {
-            invoke_on_detect(Err(&Error::InvalidMime));
-            invoke_on_stop();
-
+            handle_detection_error(Error::InvalidMime);
             return;
         }
 
