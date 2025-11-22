@@ -1,7 +1,7 @@
 use std::io::Cursor;
 
 use image::{
-    GrayImage, ImageReader,
+    ImageReader,
     imageops::{FilterType, resize},
 };
 use js_sys::Uint8Array;
@@ -17,8 +17,9 @@ use crate::{
     event::{invoke_on_detect, invoke_on_stop},
 };
 
-const MIN_IMAGE_DIMENSION: u32 = 10;
-const RESIZE_FACTOR: u32 = 2;
+const MIN_IMAGE_DIMENSION: u32 = 60;
+const RESIZE_FACTOR: u32 = 3;
+const CROP_FACTOR: u32 = 4;
 
 pub fn detect_from_image(file: File) {
     let Ok(reader) = FileReader::new() else {
@@ -62,7 +63,6 @@ pub fn detect_from_image(file: File) {
             };
 
             let gray = dyn_image.to_luma8();
-            // TODO: Make image processing logic configurable
             let w = gray.width() / RESIZE_FACTOR;
             let h = gray.height() / RESIZE_FACTOR;
             if w < MIN_IMAGE_DIMENSION || h < MIN_IMAGE_DIMENSION {
@@ -122,18 +122,23 @@ pub fn detect_from_stream(gray_data: Vec<u8>, width: u32, height: u32) -> Result
         return Err(Error::NotDetected);
     }
 
-    let resized_w = width / RESIZE_FACTOR;
-    let resized_h = height / RESIZE_FACTOR;
-    let image = match GrayImage::from_raw(width, height, gray_data) {
-        Some(img) => img,
-        None => return Err(Error::NotDetected),
-    };
-    let resized_image = resize(&image, resized_w, resized_h, FilterType::Lanczos3);
-    let resized_data = resized_image.into_raw();
+    let crop_w = width / CROP_FACTOR;
+    let crop_h = height / CROP_FACTOR;
+    let crop_x = (width - crop_w) / 2;
+    let crop_y = (height - crop_h) / 2;
+
+    let mut cropped = vec![0u8; (crop_w * crop_h) as usize];
+    for y in 0..crop_h {
+        for x in 0..crop_w {
+            let src_idx = ((crop_y + y) * width + (crop_x + x)) as usize;
+            let dst_idx = (y * crop_w + x) as usize;
+            cropped[dst_idx] = gray_data[src_idx];
+        }
+    }
 
     // Try UPC-A first
     let upca_result = {
-        let src = Luma8LuminanceSource::new(resized_data.clone(), resized_w, resized_h);
+        let src = Luma8LuminanceSource::new(cropped.clone(), crop_w, crop_h);
         let binarizer = HybridBinarizer::new(src);
         let mut bitmap = BinaryBitmap::new(binarizer);
         let mut reader = UPCAReader::default();
@@ -146,7 +151,7 @@ pub fn detect_from_stream(gray_data: Vec<u8>, width: u32, height: u32) -> Result
 
     // Try QR code
     let qr_result = {
-        let src = Luma8LuminanceSource::new(resized_data, resized_w, resized_h);
+        let src = Luma8LuminanceSource::new(cropped, crop_w, crop_h);
         let binarizer = HybridBinarizer::new(src);
         let mut bitmap = BinaryBitmap::new(binarizer);
         let mut reader = QRCodeReader::new();
