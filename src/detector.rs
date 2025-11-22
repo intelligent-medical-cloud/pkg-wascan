@@ -1,7 +1,7 @@
 use std::io::Cursor;
 
 use image::{
-    ImageReader,
+    GrayImage, ImageReader,
     imageops::{FilterType, resize},
 };
 use js_sys::Uint8Array;
@@ -122,9 +122,18 @@ pub fn detect_from_stream(gray_data: Vec<u8>, width: u32, height: u32) -> Result
         return Err(Error::NotDetected);
     }
 
+    let resized_w = width / RESIZE_FACTOR;
+    let resized_h = height / RESIZE_FACTOR;
+    let image = match GrayImage::from_raw(width, height, gray_data) {
+        Some(img) => img,
+        None => return Err(Error::NotDetected),
+    };
+    let resized_image = resize(&image, resized_w, resized_h, FilterType::Lanczos3);
+    let resized_data = resized_image.into_raw();
+
     // Try UPC-A first
     let upca_result = {
-        let src = Luma8LuminanceSource::new(gray_data.clone(), width, height);
+        let src = Luma8LuminanceSource::new(resized_data.clone(), resized_w, resized_h);
         let binarizer = HybridBinarizer::new(src);
         let mut bitmap = BinaryBitmap::new(binarizer);
         let mut reader = UPCAReader::default();
@@ -137,7 +146,7 @@ pub fn detect_from_stream(gray_data: Vec<u8>, width: u32, height: u32) -> Result
 
     // Try QR code
     let qr_result = {
-        let src = Luma8LuminanceSource::new(gray_data, width, height);
+        let src = Luma8LuminanceSource::new(resized_data, resized_w, resized_h);
         let binarizer = HybridBinarizer::new(src);
         let mut bitmap = BinaryBitmap::new(binarizer);
         let mut reader = QRCodeReader::new();

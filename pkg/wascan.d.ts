@@ -27,7 +27,6 @@ export function init_reader(): void;
  * Stops the stream scanning programmatically.
  */
 export function stop_stream_scan(): void;
-export function error_codes(): any;
 /**
  * Registers a callback function to be called when scanning stops.
  */
@@ -45,6 +44,7 @@ export function on_detect(cb: Function): void;
  * Registers a callback function to be called when scanning starts.
  */
 export function on_start(cb: Function): void;
+export function error_codes(): any;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -56,15 +56,15 @@ export interface InitOutput {
   readonly read_from_image: () => [number, number];
   readonly start_stream_scan: (a: number, b: number) => [number, number];
   readonly stop_stream_scan: () => void;
-  readonly error_codes: () => any;
   readonly on_detect: (a: any) => void;
   readonly on_start: (a: any) => void;
   readonly on_stop: (a: any) => void;
+  readonly error_codes: () => any;
   readonly wasm_bindgen__convert__closures_____invoke__h8149a65cd856fbde: (a: number, b: number, c: any) => void;
   readonly wasm_bindgen__closure__destroy__h5a2b013014e66453: (a: number, b: number) => void;
-  readonly wasm_bindgen__convert__closures_____invoke__hf79ceb4f2813a00e: (a: number, b: number, c: number) => void;
   readonly wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b: (a: number, b: number, c: any) => void;
   readonly wasm_bindgen__closure__destroy__hd1614e8a7e4ac567: (a: number, b: number) => void;
+  readonly wasm_bindgen__convert__closures_____invoke__hf79ceb4f2813a00e: (a: number, b: number, c: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_exn_store: (a: number) => void;

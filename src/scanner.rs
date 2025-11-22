@@ -20,7 +20,11 @@ thread_local! {
     static STREAMING: Cell<bool> = const { Cell::new(false) };
     static RUNNING_FLAG: RefCell<Option<Rc<Cell<bool>>>> = const { RefCell::new(None) };
     static VIDEO_ELEMENT_ID: RefCell<Option<String>> = const { RefCell::new(None) };
+    static LAST_DETECTED_CODE: RefCell<Option<String>> = const { RefCell::new(None) };
+    static DETECTION_COUNT: Cell<u32> = const { Cell::new(0) };
 }
+
+const REQUIRED_CONSECUTIVE_DETECTIONS: u32 = 3;
 
 fn handle_detection_error(error: Error) {
     invoke_on_detect(Err(&error));
@@ -233,9 +237,8 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
                 return;
             };
 
-            let vw = video_for_raf.video_width();
-            let vh = video_for_raf.video_height();
-            if vw == 0 || vh == 0 {
+            let now_ms = now_millis();
+            if now_ms.saturating_sub(last_scan_ms_clone.get()) < 100 {
                 if let Some(cb) = raf_cb2.borrow().as_ref() {
                     window
                         .request_animation_frame(cb.as_ref().unchecked_ref())
@@ -244,7 +247,10 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
 
                 return;
             }
+            last_scan_ms_clone.set(now_ms);
 
+            let vw = video_for_raf.video_width();
+            let vh = video_for_raf.video_height();
             canvas.set_width(vw);
             canvas.set_height(vh);
 
@@ -274,23 +280,29 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
                 *dst = y as u8;
             }
 
-            let now_ms = now_millis();
-            if now_ms.saturating_sub(last_scan_ms_clone.get()) < 100 {
-                if let Some(cb) = raf_cb2.borrow().as_ref() {
-                    window
-                        .request_animation_frame(cb.as_ref().unchecked_ref())
-                        .ok();
+            if let Ok(text) = detect_from_stream(gray, vw, vh) {
+                let last_code = LAST_DETECTED_CODE.with(|code| code.borrow().clone());
+
+                if let Some(ref last) = last_code {
+                    if last == &text {
+                        let count = DETECTION_COUNT.with(|c| c.get()) + 1;
+                        DETECTION_COUNT.with(|c| c.set(count));
+                        if count >= REQUIRED_CONSECUTIVE_DETECTIONS {
+                            invoke_on_detect(Ok(&text));
+                            DETECTION_COUNT.with(|c| c.set(0));
+                        }
+                    } else {
+                        LAST_DETECTED_CODE.with(|code| {
+                            *code.borrow_mut() = Some(text.clone());
+                        });
+                        DETECTION_COUNT.with(|c| c.set(1));
+                    }
+                } else {
+                    LAST_DETECTED_CODE.with(|code| {
+                        *code.borrow_mut() = Some(text.clone());
+                    });
+                    DETECTION_COUNT.with(|c| c.set(1));
                 }
-
-                return;
-            }
-            last_scan_ms_clone.set(now_ms);
-
-            if vw >= 3
-                && vh >= 3
-                && let Ok(text) = detect_from_stream(gray, vw, vh)
-            {
-                invoke_on_detect(Ok(&text));
             }
 
             if let Some(cb) = raf_cb2.borrow().as_ref() {
@@ -341,6 +353,11 @@ pub fn stop_stream_scan() {
 
 fn stop_stream_scan_internal(video: &HtmlVideoElement, stream: &MediaStream) {
     STREAMING.with(|s| s.set(false));
+
+    LAST_DETECTED_CODE.with(|code| {
+        *code.borrow_mut() = None;
+    });
+    DETECTION_COUNT.with(|c| c.set(0));
 
     RUNNING_FLAG.with(|flag| {
         if let Some(running) = flag.borrow().as_ref() {
