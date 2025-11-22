@@ -1,10 +1,10 @@
 use std::cell::RefCell;
 
-use js_sys::{Error as JsError, Function};
+use js_sys::{Function, Object, Reflect};
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 use web_sys::console;
 
-use crate::error::Error;
+use crate::error::{self, Error};
 
 thread_local! {
     static ON_START: RefCell<Option<Function>> = const { RefCell::new(None) };
@@ -24,9 +24,32 @@ pub fn invoke_on_start() {
 }
 
 pub fn invoke_on_detect(result: Result<&str, &Error>) {
-    let cb_arg = match result {
-        Ok(v) => JsValue::from_str(v),
-        Err(e) => JsError::new(&e.to_string()).into(),
+    let cb_arg = {
+        let obj = Object::new();
+        match result {
+            Ok(value) => {
+                let _ = Reflect::set(
+                    &obj,
+                    &JsValue::from_str("success"),
+                    &JsValue::from_bool(true),
+                );
+                let _ = Reflect::set(&obj, &JsValue::from_str("value"), &JsValue::from_str(value));
+                obj.into()
+            }
+            Err(error) => {
+                let _ = Reflect::set(
+                    &obj,
+                    &JsValue::from_str("success"),
+                    &JsValue::from_bool(false),
+                );
+                let _ = Reflect::set(
+                    &obj,
+                    &JsValue::from_str("error"),
+                    &error::error_to_js(error),
+                );
+                obj.into()
+            }
+        }
     };
 
     ON_DETECT.with(|slot| {
@@ -50,16 +73,24 @@ pub fn invoke_on_stop() {
     });
 }
 
+/// Registers a callback function to be called when scanning starts.
 #[wasm_bindgen]
 pub fn on_start(cb: Function) {
     ON_START.with(|slot| *slot.borrow_mut() = Some(cb));
 }
 
+/// Registers a callback function to be called when a barcode is detected.
+///
+/// The callback receives an object with:
+/// - `success: boolean` - true if detection succeeded, false otherwise
+/// - `value?: string` - the detected barcode (only present if success is true)
+/// - `error?: string` - the error code (only present if success is false)
 #[wasm_bindgen]
 pub fn on_detect(cb: Function) {
     ON_DETECT.with(|slot| *slot.borrow_mut() = Some(cb));
 }
 
+/// Registers a callback function to be called when scanning stops.
 #[wasm_bindgen]
 pub fn on_stop(cb: Function) {
     ON_STOP.with(|slot| *slot.borrow_mut() = Some(cb));

@@ -14,6 +14,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 wasm-bindgen = "0.2.105"
+wasm-bindgen-futures = "0.4.55"
 js-sys = "0.3.82"
 console_error_panic_hook = "0.1.7"
 image = { version = "0.25.9", default-features = true }
@@ -29,6 +30,15 @@ features = [
     "FileList",
     "FileReader",
     "HtmlInputElement",
+    "HtmlVideoElement",
+    "HtmlCanvasElement",
+    "CanvasRenderingContext2d",
+    "ImageData",
     "Window",
+    "Navigator",
+    "MediaDevices",
+    "MediaStream",
+    "MediaStreamTrack",
+    "MediaStreamConstraints",
     "console"
 ]

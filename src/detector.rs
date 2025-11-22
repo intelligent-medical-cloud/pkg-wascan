@@ -1,18 +1,24 @@
-use std::{collections::HashSet, io::Cursor};
+use std::io::Cursor;
 
-use image::ImageReader;
+use image::{
+    ImageReader,
+    imageops::{FilterType, resize},
+};
 use js_sys::Uint8Array;
 use rxing::{
-    BarcodeFormat, BinaryBitmap, DecodeHints, Luma8LuminanceSource, MultiFormatReader,
-    common::HybridBinarizer,
+    BinaryBitmap, Luma8LuminanceSource, Reader, common::HybridBinarizer, oned::UPCAReader,
+    qrcode::QRCodeReader,
 };
-use wasm_bindgen::{JsCast, closure::Closure};
+use wasm_bindgen::{JsCast, prelude::Closure};
 use web_sys::{Event, File, FileReader};
 
 use crate::{
     error::Error,
     event::{invoke_on_detect, invoke_on_stop},
 };
+
+const MIN_IMAGE_DIMENSION: u32 = 10;
+const RESIZE_FACTOR: u32 = 2;
 
 pub fn detect_from_image(file: File) {
     let Ok(reader) = FileReader::new() else {
@@ -56,32 +62,44 @@ pub fn detect_from_image(file: File) {
             };
 
             let gray = dyn_image.to_luma8();
-            // TODO: img processing flexible logic
-            let w = gray.width();
-            let h = gray.height();
-            if w < 10 || h < 10 {
+            // TODO: Make image processing logic configurable
+            let w = gray.width() / RESIZE_FACTOR;
+            let h = gray.height() / RESIZE_FACTOR;
+            if w < MIN_IMAGE_DIMENSION || h < MIN_IMAGE_DIMENSION {
                 invoke_on_detect(Err(&Error::NotDetected));
                 invoke_on_stop();
 
                 return;
             }
+            let gray_resized = resize(&gray, w, h, FilterType::Lanczos3);
+            let gray_data = gray_resized.into_raw();
 
-            let src = Luma8LuminanceSource::new(gray.as_raw().to_vec(), w, h);
-            let binarizer = HybridBinarizer::new(src);
-            let mut bitmap = BinaryBitmap::new(binarizer);
-
-            let mut reader = MultiFormatReader::default();
-            let mut formats = HashSet::with_capacity(2);
-            formats.insert(BarcodeFormat::UPC_A);
-            formats.insert(BarcodeFormat::QR_CODE);
-            let hints = DecodeHints {
-                PossibleFormats: Some(formats),
-                ..DecodeHints::default()
+            // Try UPC-A
+            let upca_result = {
+                let src = Luma8LuminanceSource::new(gray_data.clone(), w, h);
+                let binarizer = HybridBinarizer::new(src);
+                let mut bitmap = BinaryBitmap::new(binarizer);
+                let mut reader = UPCAReader::default();
+                reader.decode(&mut bitmap)
             };
-            reader.set_hints(&hints);
 
-            match reader.decode_with_state(&mut bitmap) {
-                // TODO: results will be a tuple of code, type and maybe bounds
+            if let Ok(res) = upca_result {
+                invoke_on_detect(Ok(res.getText()));
+                invoke_on_stop();
+
+                return;
+            }
+
+            // Try QR
+            let qr_result = {
+                let src = Luma8LuminanceSource::new(gray_data, w, h);
+                let binarizer = HybridBinarizer::new(src);
+                let mut bitmap = BinaryBitmap::new(binarizer);
+                let mut reader = QRCodeReader::new();
+                reader.decode(&mut bitmap)
+            };
+
+            match qr_result {
                 Ok(res) => invoke_on_detect(Ok(res.getText())),
                 Err(_) => invoke_on_detect(Err(&Error::NotDetected)),
             }
@@ -96,5 +114,38 @@ pub fn detect_from_image(file: File) {
     if reader.read_as_array_buffer(&file).is_err() {
         invoke_on_detect(Err(&Error::Internal));
         invoke_on_stop();
+    }
+}
+
+pub fn detect_from_stream(gray_data: Vec<u8>, width: u32, height: u32) -> Result<String, Error> {
+    if width < MIN_IMAGE_DIMENSION || height < MIN_IMAGE_DIMENSION {
+        return Err(Error::NotDetected);
+    }
+
+    // Try UPC-A first
+    let upca_result = {
+        let src = Luma8LuminanceSource::new(gray_data.clone(), width, height);
+        let binarizer = HybridBinarizer::new(src);
+        let mut bitmap = BinaryBitmap::new(binarizer);
+        let mut reader = UPCAReader::default();
+        reader.decode(&mut bitmap)
+    };
+
+    if let Ok(res) = upca_result {
+        return Ok(res.getText().to_string());
+    }
+
+    // Try QR code
+    let qr_result = {
+        let src = Luma8LuminanceSource::new(gray_data, width, height);
+        let binarizer = HybridBinarizer::new(src);
+        let mut bitmap = BinaryBitmap::new(binarizer);
+        let mut reader = QRCodeReader::new();
+        reader.decode(&mut bitmap)
+    };
+
+    match qr_result {
+        Ok(res) => Ok(res.getText().to_string()),
+        Err(_) => Err(Error::NotDetected),
     }
 }

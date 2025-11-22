@@ -1,4 +1,3 @@
-mod config;
 mod detector;
 mod error;
 mod event;
@@ -7,44 +6,41 @@ mod scanner;
 
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 
-use error::Error;
-
-// WASM ENTRY POINT
+/// WASM entry point
 #[wasm_bindgen(start)]
-pub fn main_js() -> Result<(), JsValue> {
+pub fn main_js() {
     console_error_panic_hook::set_once();
+}
 
-    let window = web_sys::window().ok_or(JsValue::from(Error::WindowNotFound.to_string()))?;
-    let document = window
-        .document()
-        .ok_or(JsValue::from(Error::DocumentNotFound.to_string()))?;
+/// Initializes the reader module. Must be called before using `read_from_image`.
+#[wasm_bindgen]
+pub fn init_reader() -> Result<(), JsValue> {
+    reader::init_reader()
+}
 
-    let mut read_available = false;
-    let mut scan_available = false;
-    let mut _stop_available = false;
+/// Initializes the scanner module. Must be called before using `start_stream_scan`.
+#[wasm_bindgen]
+pub fn init_scanner() -> Result<(), JsValue> {
+    scanner::init_scanner()
+}
 
-    let read_from_image_button = document.get_element_by_id(config::READ_FROM_IMAGE_BUTTON_ID);
-    if read_from_image_button.is_some() {
-        read_available = true;
-    }
+/// Triggers the file input dialog to read an image file.
+#[wasm_bindgen]
+pub fn read_from_image() -> Result<(), JsValue> {
+    reader::read_from_image()
+}
 
-    let scan_from_stream_button = document.get_element_by_id(config::SCAN_FROM_STREAM_BUTTON_ID);
-    if scan_from_stream_button.is_some() {
-        scan_available = true;
-    }
+/// Starts the stream-based barcode scanning from the camera.
+///
+/// ## Arguments
+/// * `video_element_id` - The ID of the video element in the DOM where the stream will be displayed
+#[wasm_bindgen]
+pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
+    scanner::start_stream_scan(video_element_id)
+}
 
-    let stop_stream_scan_button = document.get_element_by_id(config::STOP_STREAM_SCAN_BUTTON_ID);
-    if stop_stream_scan_button.is_some() {
-        _stop_available = true;
-    }
-
-    if !read_available && !scan_available {
-        return Err(JsValue::from(Error::TriggerButtonsNotFound.to_string()));
-    }
-
-    if read_available {
-        reader::init_reader(&document, &read_from_image_button.unwrap())?;
-    }
-
-    Ok(())
+/// Stops the stream scanning programmatically.
+#[wasm_bindgen]
+pub fn stop_stream_scan() {
+    scanner::stop_stream_scan();
 }
