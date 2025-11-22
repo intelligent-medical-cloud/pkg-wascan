@@ -69,23 +69,21 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
     invoke_on_start();
 
     spawn_local(async move {
-        let window = web_sys::window().unwrap();
-        let navigator = window.navigator();
+        let Some(window) = web_sys::window() else {
+            STREAMING.with(|s| s.set(false));
 
+            handle_detection_error(Error::WindowNotFound);
+
+            return;
+        };
+
+        let navigator = window.navigator();
         let media_devices = match navigator.media_devices() {
             Ok(md) => md,
-            Err(err) => {
+            Err(_) => {
                 STREAMING.with(|s| s.set(false));
 
-                let err_name = Reflect::get(&err, &JsValue::from_str("name"))
-                    .ok()
-                    .and_then(|name_val| name_val.as_string());
-                let error_type = match err_name.as_deref() {
-                    Some("NotAllowedError") | Some("PermissionDeniedError") => Error::NoPermission,
-                    _ => Error::NoMedia,
-                };
-
-                handle_detection_error(error_type);
+                handle_detection_error(Error::NoMedia);
 
                 return;
             }
@@ -96,6 +94,17 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
 
         let g_um = match media_devices.get_user_media_with_constraints(&constraints) {
             Ok(s) => s,
+            Err(_) => {
+                STREAMING.with(|s| s.set(false));
+
+                handle_detection_error(Error::NoMedia);
+
+                return;
+            }
+        };
+
+        let stream_js = match JsFuture::from(g_um).await {
+            Ok(s) => s,
             Err(err) => {
                 STREAMING.with(|s| s.set(false));
 
@@ -108,17 +117,6 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
                 };
 
                 handle_detection_error(error_type);
-
-                return;
-            }
-        };
-
-        let stream_js = match JsFuture::from(g_um).await {
-            Ok(s) => s,
-            Err(_) => {
-                STREAMING.with(|s| s.set(false));
-
-                handle_detection_error(Error::NoMedia);
 
                 return;
             }
@@ -139,7 +137,25 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
         video_el.set_muted(true);
         video_el.play().ok();
 
-        let canvas: HtmlCanvasElement = doc.create_element("canvas").unwrap().dyn_into().unwrap();
+        let canvas: HtmlCanvasElement = match doc.create_element("canvas") {
+            Ok(el) => match el.dyn_into() {
+                Ok(canvas) => canvas,
+                Err(_) => {
+                    STREAMING.with(|s| s.set(false));
+
+                    handle_detection_error(Error::Internal);
+
+                    return;
+                }
+            },
+            Err(_) => {
+                STREAMING.with(|s| s.set(false));
+
+                handle_detection_error(Error::Internal);
+
+                return;
+            }
+        };
         canvas.set_attribute("style", "display: none; ").ok();
 
         let context_options = Object::new();
@@ -155,35 +171,33 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
                 .ok()
                 .and_then(|v| Function::from(v).into());
 
-            if let Some(f) = get_context_fn {
+            let ctx_result: Option<CanvasRenderingContext2d> = if let Some(f) = get_context_fn {
                 if let Ok(ctx_js) =
                     f.call2(&canvas, &JsValue::from_str("2d"), &context_options.into())
                 {
-                    if let Ok(ctx) = ctx_js.dyn_into::<CanvasRenderingContext2d>() {
-                        ctx
-                    } else {
-                        canvas
-                            .get_context("2d")
-                            .unwrap()
-                            .unwrap()
-                            .dyn_into()
-                            .unwrap()
-                    }
+                    ctx_js.dyn_into::<CanvasRenderingContext2d>().ok()
                 } else {
                     canvas
                         .get_context("2d")
-                        .unwrap()
-                        .unwrap()
-                        .dyn_into()
-                        .unwrap()
+                        .ok()
+                        .flatten()
+                        .and_then(|ctx| ctx.dyn_into::<CanvasRenderingContext2d>().ok())
                 }
             } else {
                 canvas
                     .get_context("2d")
-                    .unwrap()
-                    .unwrap()
-                    .dyn_into()
-                    .unwrap()
+                    .ok()
+                    .flatten()
+                    .and_then(|ctx| ctx.dyn_into::<CanvasRenderingContext2d>().ok())
+            };
+
+            match ctx_result {
+                Some(ctx) => ctx,
+                None => {
+                    STREAMING.with(|s| s.set(false));
+                    handle_detection_error(Error::Internal);
+                    return;
+                }
             }
         };
 
@@ -207,16 +221,18 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
                 return;
             }
 
-            let window = web_sys::window().unwrap();
+            let Some(window) = web_sys::window() else {
+                return;
+            };
 
             let vw = video_for_raf.video_width();
             let vh = video_for_raf.video_height();
             if vw == 0 || vh == 0 {
-                window
-                    .request_animation_frame(
-                        raf_cb2.borrow().as_ref().unwrap().as_ref().unchecked_ref(),
-                    )
-                    .ok();
+                if let Some(cb) = raf_cb2.borrow().as_ref() {
+                    window
+                        .request_animation_frame(cb.as_ref().unchecked_ref())
+                        .ok();
+                }
 
                 return;
             }
@@ -229,11 +245,11 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
             let image_data = match ctx.get_image_data(0.0, 0.0, vw as f64, vh as f64) {
                 Ok(d) => d,
                 Err(_) => {
-                    window
-                        .request_animation_frame(
-                            raf_cb2.borrow().as_ref().unwrap().as_ref().unchecked_ref(),
-                        )
-                        .ok();
+                    if let Some(cb) = raf_cb2.borrow().as_ref() {
+                        window
+                            .request_animation_frame(cb.as_ref().unchecked_ref())
+                            .ok();
+                    }
 
                     return;
                 }
@@ -252,11 +268,12 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
 
             let now_ms = now_millis();
             if now_ms.saturating_sub(last_scan_ms_clone.get()) < 100 {
-                window
-                    .request_animation_frame(
-                        raf_cb2.borrow().as_ref().unwrap().as_ref().unchecked_ref(),
-                    )
-                    .ok();
+                if let Some(cb) = raf_cb2.borrow().as_ref() {
+                    window
+                        .request_animation_frame(cb.as_ref().unchecked_ref())
+                        .ok();
+                }
+
                 return;
             }
             last_scan_ms_clone.set(now_ms);
@@ -268,16 +285,18 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
                 invoke_on_detect(Ok(&text));
             }
 
-            window
-                .request_animation_frame(
-                    raf_cb2.borrow().as_ref().unwrap().as_ref().unchecked_ref(),
-                )
-                .ok();
+            if let Some(cb) = raf_cb2.borrow().as_ref() {
+                window
+                    .request_animation_frame(cb.as_ref().unchecked_ref())
+                    .ok();
+            }
         }));
 
-        window
-            .request_animation_frame(raf_cb.borrow().as_ref().unwrap().as_ref().unchecked_ref())
-            .ok();
+        if let Some(cb) = raf_cb.borrow().as_ref() {
+            window
+                .request_animation_frame(cb.as_ref().unchecked_ref())
+                .ok();
+        }
     });
 
     Ok(())
