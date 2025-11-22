@@ -19,7 +19,7 @@ use crate::{
 
 const MIN_IMAGE_DIMENSION: u32 = 60;
 const RESIZE_FACTOR: u32 = 3;
-const CROP_FACTOR: u32 = 4;
+const CROP_FACTOR: u32 = 3;
 
 pub fn detect_from_image(file: File) {
     let Ok(reader) = FileReader::new() else {

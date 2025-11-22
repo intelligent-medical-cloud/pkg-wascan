@@ -1,7 +1,7 @@
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
-use js_sys::{Date, Function, Object, Reflect};
+use js_sys::{Array, Date, Function, Object, Reflect};
 use wasm_bindgen::{JsCast, JsValue, prelude::Closure};
 use wasm_bindgen_futures::{JsFuture, spawn_local};
 use web_sys::{
@@ -24,7 +24,7 @@ thread_local! {
     static DETECTION_COUNT: Cell<u32> = const { Cell::new(0) };
 }
 
-const REQUIRED_CONSECUTIVE_DETECTIONS: u32 = 3;
+const REQUIRED_CONSECUTIVE_DETECTIONS: u32 = 2;
 
 fn handle_detection_error(error: Error) {
     invoke_on_detect(Err(&error));
@@ -99,6 +99,62 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
             &video_constraints,
             &JsValue::from_str("facingMode"),
             &JsValue::from_str("environment"),
+        )
+        .ok();
+
+        let width_constraint = Object::new();
+        Reflect::set(
+            &width_constraint,
+            &JsValue::from_str("ideal"),
+            &JsValue::from_f64(1920.0),
+        )
+        .ok();
+        Reflect::set(
+            &width_constraint,
+            &JsValue::from_str("min"),
+            &JsValue::from_f64(1280.0),
+        )
+        .ok();
+        Reflect::set(
+            &video_constraints,
+            &JsValue::from_str("width"),
+            &width_constraint.into(),
+        )
+        .ok();
+
+        let height_constraint = Object::new();
+        Reflect::set(
+            &height_constraint,
+            &JsValue::from_str("ideal"),
+            &JsValue::from_f64(1080.0),
+        )
+        .ok();
+        Reflect::set(
+            &height_constraint,
+            &JsValue::from_str("min"),
+            &JsValue::from_f64(720.0),
+        )
+        .ok();
+        Reflect::set(
+            &video_constraints,
+            &JsValue::from_str("height"),
+            &height_constraint.into(),
+        )
+        .ok();
+
+        let advanced_constraints = Array::new();
+        let focus_constraint = Object::new();
+        Reflect::set(
+            &focus_constraint,
+            &JsValue::from_str("focusMode"),
+            &JsValue::from_str("continuous"),
+        )
+        .ok();
+        advanced_constraints.push(&focus_constraint);
+        Reflect::set(
+            &video_constraints,
+            &JsValue::from_str("advanced"),
+            &advanced_constraints.into(),
         )
         .ok();
 
