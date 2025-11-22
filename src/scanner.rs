@@ -90,7 +90,15 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
         };
 
         let constraints = MediaStreamConstraints::new();
-        constraints.set_video(&JsValue::TRUE);
+        let video_constraints = Object::new();
+        Reflect::set(
+            &video_constraints,
+            &JsValue::from_str("facingMode"),
+            &JsValue::from_str("environment"),
+        )
+        .ok();
+
+        constraints.set_video(&video_constraints.into());
 
         let g_um = match media_devices.get_user_media_with_constraints(&constraints) {
             Ok(s) => s,
