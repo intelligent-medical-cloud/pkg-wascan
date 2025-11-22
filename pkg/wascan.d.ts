@@ -1,9 +1,33 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Registers a callback function to be called when scanning starts.
+ * Starts the stream-based barcode scanning from the camera.
+ *
+ * ## Arguments
+ * * `video_element_id` - The ID of the video element in the DOM where the stream will be displayed
  */
-export function on_start(cb: Function): void;
+export function start_stream_scan(video_element_id: string): void;
+/**
+ * WASM entry point
+ */
+export function main_js(): void;
+/**
+ * Initializes the scanner module. Must be called before using `start_stream_scan`.
+ */
+export function init_scanner(): void;
+/**
+ * Triggers the file input dialog to read an image file.
+ */
+export function read_from_image(): void;
+/**
+ * Initializes the reader module. Must be called before using `read_from_image`.
+ */
+export function init_reader(): void;
+/**
+ * Stops the stream scanning programmatically.
+ */
+export function stop_stream_scan(): void;
+export function error_codes(): any;
 /**
  * Registers a callback function to be called when scanning stops.
  */
@@ -18,35 +42,35 @@ export function on_stop(cb: Function): void;
  */
 export function on_detect(cb: Function): void;
 /**
- * WASM entry point
+ * Registers a callback function to be called when scanning starts.
  */
-export function main_js(): void;
-/**
- * Re-initializes the reader. Can be called from JavaScript/Vue lifecycle hooks
- * if buttons are added dynamically after WASM initialization.
- */
-export function reinit_reader(): void;
-export function error_codes(): any;
+export function on_start(cb: Function): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
+  readonly init_reader: () => [number, number];
+  readonly init_scanner: () => [number, number];
+  readonly main_js: () => void;
+  readonly read_from_image: () => [number, number];
+  readonly start_stream_scan: (a: number, b: number) => [number, number];
+  readonly stop_stream_scan: () => void;
+  readonly error_codes: () => any;
   readonly on_detect: (a: any) => void;
   readonly on_start: (a: any) => void;
   readonly on_stop: (a: any) => void;
-  readonly main_js: () => void;
-  readonly reinit_reader: () => [number, number];
-  readonly error_codes: () => any;
-  readonly wasm_bindgen__convert__closures_____invoke__h94677a04d34e1036: (a: number, b: number, c: any) => void;
-  readonly wasm_bindgen__closure__destroy__hdf7a0ee1987079ab: (a: number, b: number) => void;
-  readonly wasm_bindgen__convert__closures_____invoke__h126d758235dc3db2: (a: number, b: number) => void;
+  readonly wasm_bindgen__convert__closures_____invoke__hf79ceb4f2813a00e: (a: number, b: number, c: number) => void;
+  readonly wasm_bindgen__closure__destroy__h5a2b013014e66453: (a: number, b: number) => void;
+  readonly wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b: (a: number, b: number, c: any) => void;
+  readonly wasm_bindgen__closure__destroy__hd1614e8a7e4ac567: (a: number, b: number) => void;
+  readonly wasm_bindgen__convert__closures_____invoke__h8149a65cd856fbde: (a: number, b: number, c: any) => void;
+  readonly __wbindgen_malloc: (a: number, b: number) => number;
+  readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_exn_store: (a: number) => void;
   readonly __externref_table_alloc: () => number;
   readonly __wbindgen_externrefs: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
-  readonly __wbindgen_malloc: (a: number, b: number) => number;
-  readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __externref_table_dealloc: (a: number) => void;
   readonly __wbindgen_start: () => void;
 }

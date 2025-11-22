@@ -12,14 +12,20 @@ pub enum Error {
     #[error("ERR_NO_DOCUMENT")]
     DocumentNotFound,
 
-    #[error("ERR_NO_TRIGGER_BUTTONS")]
-    TriggerButtonsNotFound,
-
     #[error("ERR_NO_FILE_SELECTED")]
     NoFileSelected,
 
     #[error("ERR_INVALID_MIME")]
     InvalidMime,
+
+    #[error("ERR_INVALID_VIDEO_ELEMENT_ID")]
+    InvalidVideoElementId,
+
+    #[error("ERR_NO_MEDIA")]
+    NoMedia,
+
+    #[error("ERR_NO_PERMISSION")]
+    NoPermission,
 
     #[error("ERR_NOT_DETECTED")]
     NotDetected,
@@ -33,9 +39,11 @@ impl Error {
         match self {
             Error::WindowNotFound => "ERR_NO_WINDOW",
             Error::DocumentNotFound => "ERR_NO_DOCUMENT",
-            Error::TriggerButtonsNotFound => "ERR_NO_TRIGGER_BUTTONS",
             Error::NoFileSelected => "ERR_NO_FILE_SELECTED",
             Error::InvalidMime => "ERR_INVALID_MIME",
+            Error::InvalidVideoElementId => "ERR_INVALID_VIDEO_ELEMENT_ID",
+            Error::NoMedia => "ERR_NO_MEDIA",
+            Error::NoPermission => "ERR_NO_PERMISSION",
             Error::NotDetected => "ERR_NOT_DETECTED",
             Error::Internal => "ERR_INTERNAL",
         }
@@ -66,9 +74,11 @@ pub fn error_codes() -> JsValue {
     let errors = [
         ("WindowNotFound", Error::WindowNotFound),
         ("DocumentNotFound", Error::DocumentNotFound),
-        ("TriggerButtonsNotFound", Error::TriggerButtonsNotFound),
         ("NoFileSelected", Error::NoFileSelected),
         ("InvalidMime", Error::InvalidMime),
+        ("InvalidVideoElementId", Error::InvalidVideoElementId),
+        ("NoMedia", Error::NoMedia),
+        ("NoPermission", Error::NoPermission),
         ("NotDetected", Error::NotDetected),
         ("Internal", Error::Internal),
     ];

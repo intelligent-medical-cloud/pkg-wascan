@@ -23,11 +23,6 @@ pub fn invoke_on_start() {
     });
 }
 
-/// Invokes the on_detect callback with the detection result.
-///
-/// # Arguments
-///
-/// * `result` - Either a successful detection string or an error reference.
 pub fn invoke_on_detect(result: Result<&str, &Error>) {
     let cb_arg = {
         let obj = Object::new();

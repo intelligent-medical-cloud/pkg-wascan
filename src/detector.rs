@@ -113,3 +113,40 @@ pub fn detect_from_image(file: File) {
         invoke_on_stop();
     }
 }
+
+/// Detects barcodes from a grayscale image buffer.
+///
+/// Tries UPC-A first, then falls back to QR code.
+/// Returns Ok(text) if detected, Err(NotDetected) otherwise.
+pub fn detect_from_stream(gray_data: Vec<u8>, width: u32, height: u32) -> Result<String, Error> {
+    if width < MIN_IMAGE_DIMENSION || height < MIN_IMAGE_DIMENSION {
+        return Err(Error::NotDetected);
+    }
+
+    // Try UPC-A first
+    let upca_result = {
+        let src = Luma8LuminanceSource::new(gray_data.clone(), width, height);
+        let binarizer = HybridBinarizer::new(src);
+        let mut bitmap = BinaryBitmap::new(binarizer);
+        let mut reader = UPCAReader::default();
+        reader.decode(&mut bitmap)
+    };
+
+    if let Ok(res) = upca_result {
+        return Ok(res.getText().to_string());
+    }
+
+    // Fall back to QR code
+    let qr_result = {
+        let src = Luma8LuminanceSource::new(gray_data, width, height);
+        let binarizer = HybridBinarizer::new(src);
+        let mut bitmap = BinaryBitmap::new(binarizer);
+        let mut reader = QRCodeReader::new();
+        reader.decode(&mut bitmap)
+    };
+
+    match qr_result {
+        Ok(res) => Ok(res.getText().to_string()),
+        Err(_) => Err(Error::NotDetected),
+    }
+}
