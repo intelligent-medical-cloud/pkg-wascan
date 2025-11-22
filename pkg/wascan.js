@@ -258,16 +258,16 @@ export function error_codes() {
     return ret;
 }
 
-function wasm_bindgen__convert__closures_____invoke__h8149a65cd856fbde(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h8149a65cd856fbde(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__hf79ceb4f2813a00e(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__hf79ceb4f2813a00e(arg0, arg1, arg2);
 }
 
 function wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2) {
     wasm.wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2);
 }
 
-function wasm_bindgen__convert__closures_____invoke__hf79ceb4f2813a00e(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__hf79ceb4f2813a00e(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h8149a65cd856fbde(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h8149a65cd856fbde(arg0, arg1, arg2);
 }
 
 const EXPECTED_RESPONSE_TYPES = new Set(['basic', 'cors', 'default']);
