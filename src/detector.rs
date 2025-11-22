@@ -1,4 +1,4 @@
-use std::{collections::HashSet, io::Cursor};
+use std::io::Cursor;
 
 use image::{
     ImageReader,
@@ -9,7 +9,7 @@ use rxing::{
     BinaryBitmap, Luma8LuminanceSource, Reader, common::HybridBinarizer, oned::UPCAReader,
     qrcode::QRCodeReader,
 };
-use wasm_bindgen::{JsCast, closure::Closure};
+use wasm_bindgen::{JsCast, prelude::Closure};
 use web_sys::{Event, File, FileReader};
 
 use crate::{
