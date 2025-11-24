@@ -1,8 +1,8 @@
 [package]
 name = "wascan"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2024"
-description = "BarCode scanning library in WebAssembly"
+description = "Production-ready barcode and QR code scanner for web browsers. Handles camera access, streaming, and file input automatically. Works across all modern browsers and platforms (iOS, Android, Safari, Chrome, etc.). Built with Rust and WebAssembly for high performance."
 repository = "https://github.com/intelligent-medical-cloud/pkg-wascan"
 license = "Apache-2.0"
 authors = ["Intelligent Medical Cloud Inc."]

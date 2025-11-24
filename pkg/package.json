@@ -1,7 +1,7 @@
 {
   "name": "wascan",
-  "version": "0.1.4",
-  "description": "WebAssembly barcode scanning library for the browser",
+  "version": "0.1.5",
+  "description": "Production-ready barcode and QR code scanner for web browsers. Handles camera access, streaming, and file input automatically. Works across all modern browsers and platforms (iOS, Android, Safari, Chrome, etc.). Built with Rust and WebAssembly for high performance.",
   "type": "module",
   "main": "wascan.js",
   "types": "wascan.d.ts",

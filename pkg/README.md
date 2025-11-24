@@ -1,16 +1,19 @@
 # wascan
 
+[![npm](https://img.shields.io/npm/v/wascan.svg)](https://www.npmjs.com/package/wascan)
 [![crates.io](https://img.shields.io/crates/v/wascan.svg)](https://crates.io/crates/wascan)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE-APACHE)
 [![Downloads](https://img.shields.io/crates/d/wascan.svg)](https://crates.io/crates/wascan)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE-APACHE)
 
-A WebAssembly barcode scanning library for the browser, built with Rust and wasm-bindgen.
+A **production-ready, plug-and-play** WebAssembly barcode scanning library for the browser, built with Rust and wasm-bindgen. **wascan** handles all the complexity of camera access, streaming, and file input automatically - just integrate and start scanning.
 
 ## Features
 
+- ✅ **Production Ready** - Plug-and-play solution, ready for production use
 - 🎯 **Barcode & QR Code Scanning** - By default only **UPC-A** and **QR Code** are included in the compiled wasm
-- 📷 **Camera Stream Support** - Real-time scanning from webcam/camera streams
-- 🖼️ **Image File Support** - Scan barcodes from uploaded image files
+- 📷 **Automatic Camera Handling** - Camera access and streaming handled automatically with optimal configurations applied - no manual camera setup required
+- 🖼️ **Built-in File Input** - File input field creation and handling managed by the library - just call the function
+- 🌐 **Universal Browser Support** - Works on all modern browsers and platforms including iOS, Android, Safari, Chrome, Firefox, and Edge
 - ⚡ **WebAssembly** - Fast, native performance in the browser
 - 🚀 **High Performance** - Very high accuracy with low latency (typically under 0.2ms per detection)
 - 🔧 **Easy Integration** - Simple JavaScript API
@@ -42,7 +45,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-wascan = "0.1.4"
+wascan = "0.1.5"
 ```
 
 For JavaScript/TypeScript projects using npm, the package is ready to use. For Rust projects or custom builds, see the [Build](#build) section below.
@@ -234,11 +237,10 @@ A working demo is included in the `demo/` directory. To run it:
 make demo
 ```
 
-3. **Open your browser:**
-   - Navigate to `http://localhost:8000/demo`
-   - Click "Start Stream Scan" to scan from your camera
-   - Or click "Read From Image" to upload and scan an image file
-   - Detected barcodes will appear in an alert and the browser console
+- Navigate to `http://localhost:8000/demo`
+- Click "Start Stream Scan" to scan from your camera
+- Or click "Read From Image" to upload and scan an image file
+- Detected barcodes will appear in an alert and the browser console
 
 The demo includes:
 
@@ -246,9 +248,20 @@ The demo includes:
 - Image file upload scanning
 - Event callbacks demonstration
 
+## Browser & Platform Support
+
+**wascan** works seamlessly across all modern browsers and platforms:
+
+- ✅ **Desktop**: Chrome, Firefox, Safari, Edge
+- ✅ **Mobile**: iOS Safari, Chrome Android, Firefox Mobile
+- ✅ **Tablets**: iPad, Android tablets
+- ✅ **WebAssembly**: Required (supported by all modern browsers)
+
+No platform-specific code needed - the library handles all browser differences automatically.
+
 ## Requirements
 
-- Rust toolchain
+- Rust toolchain (for building from source)
 - `wasm-bindgen-cli` and `wasm32-unknown-unknown` for building WebAssembly packages (install via `make init`)
 - Python 3 (for the demo server, or use any static file server)
 - Modern browser with WebAssembly and WebRTC support (for camera functionality)
