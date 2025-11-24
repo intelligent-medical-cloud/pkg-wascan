@@ -1,6 +1,6 @@
 {
   "name": "wascan",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "WebAssembly barcode scanning library for the browser",
   "type": "module",
   "main": "wascan.js",

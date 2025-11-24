@@ -1,7 +1,6 @@
 # wascan
 
 [![crates.io](https://img.shields.io/crates/v/wascan.svg)](https://crates.io/crates/wascan)
-[![docs.rs](https://docs.rs/wascan/badge.svg)](https://docs.rs/wascan)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE-APACHE)
 [![Downloads](https://img.shields.io/crates/d/wascan.svg)](https://crates.io/crates/wascan)
 
