@@ -42,7 +42,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-wascan = "0.1.2"
+wascan = "0.1.4"
 ```
 
 For JavaScript/TypeScript projects using npm, the package is ready to use. For Rust projects or custom builds, see the [Build](#build) section below.
