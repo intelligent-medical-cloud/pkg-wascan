@@ -21,6 +21,7 @@ demo: build
 .PHONY: init lib-upd lint build demo
 
 publish-npm: build
+	@cp README.md pkg/README.md
 	@cd pkg && npm publish
 
 publish-cargo: build
