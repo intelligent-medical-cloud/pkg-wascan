@@ -1,0 +1,35 @@
+{
+  "name": "wascan",
+  "version": "0.1.2",
+  "description": "WebAssembly barcode scanning library for the browser",
+  "type": "module",
+  "main": "wascan.js",
+  "types": "wascan.d.ts",
+  "files": [
+    "wascan.js",
+    "wascan.d.ts",
+    "wascan_bg.wasm",
+    "wascan_bg.wasm.d.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/intelligent-medical-cloud/pkg-wascan.git"
+  },
+  "keywords": [
+    "barcode",
+    "qr-code",
+    "scanner",
+    "webassembly",
+    "wasm",
+    "upc",
+    "ean",
+    "rxing"
+  ],
+  "author": "Intelligent Medical Cloud Inc.",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/intelligent-medical-cloud/pkg-wascan/issues"
+  },
+  "homepage": "https://github.com/intelligent-medical-cloud/pkg-wascan#readme"
+}
+

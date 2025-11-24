@@ -1,0 +1,4 @@
+*.wasm.map
+*.wat
+package.json.bak
+

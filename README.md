@@ -19,6 +19,26 @@ A WebAssembly barcode scanning library for the browser, built with Rust and wasm
 
 ## Installation
 
+### npm (Recommended for Web Projects)
+
+```bash
+npm install wascan
+```
+
+Or with yarn:
+
+```bash
+yarn add wascan
+```
+
+Or with pnpm:
+
+```bash
+pnpm add wascan
+```
+
+### Cargo (Rust Projects)
+
 Add this to your `Cargo.toml`:
 
 ```toml
@@ -26,7 +46,7 @@ Add this to your `Cargo.toml`:
 wascan = "0.1.2"
 ```
 
-For JavaScript/TypeScript projects, you'll need to build the WebAssembly package first. See the [Build](#build) section below.
+For JavaScript/TypeScript projects using npm, the package is ready to use. For Rust projects or custom builds, see the [Build](#build) section below.
 
 ## Usage
 
@@ -42,7 +62,7 @@ import init, {
   on_detect,
   on_start,
   on_stop,
-} from "./pkg/wascan.js";
+} from "wascan";
 
 // Initialize the WASM module
 await init();
@@ -184,6 +204,28 @@ This crate is designed to be compiled to WebAssembly. Use the provided Makefile:
 ```bash
 make build
 ```
+
+This will generate the WebAssembly files in the `pkg/` directory, which are ready for:
+
+- npm publishing (package.json is included)
+- Direct use in web projects
+- Integration into bundlers (webpack, vite, etc.)
+
+### Publishing to npm
+
+To publish the package to npm:
+
+1. **Ensure version is synced**: Make sure `pkg/package.json` version matches `Cargo.toml` version
+2. **Build the package**: Run `make build`
+3. **Publish**: From the `pkg/` directory, run `npm publish`
+
+Or use the convenience command:
+
+```bash
+make publish-npm
+```
+
+**Note**: You need to be logged in to npm (`npm login`) and have publish permissions for the `wascan` package name.
 
 ## Try the Demo
 
