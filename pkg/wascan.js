@@ -257,12 +257,12 @@ export function on_stop(cb) {
     wasm.on_stop(cb);
 }
 
-function wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2);
-}
-
 function wasm_bindgen__convert__closures_____invoke__h9daae113a36efd05(arg0, arg1, arg2) {
     wasm.wasm_bindgen__convert__closures_____invoke__h9daae113a36efd05(arg0, arg1, arg2);
+}
+
+function wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2);
 }
 
 function wasm_bindgen__convert__closures_____invoke__h2a56d65af659e530(arg0, arg1, arg2) {
