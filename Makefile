@@ -23,4 +23,10 @@ demo: build
 publish-npm: build
 	@cd pkg && npm publish
 
-.PHONY: publish-npm
+publish-cargo: build
+	cargo package
+	cargo package --list
+	cargo doc --no-deps
+	cargo publish
+
+.PHONY: publish-npm publish-cargo
