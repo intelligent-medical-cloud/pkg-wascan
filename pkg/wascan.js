@@ -155,19 +155,6 @@ function makeMutClosure(arg0, arg1, dtor, f) {
     CLOSURE_DTORS.register(real, state, state);
     return real;
 }
-/**
- * Stops the stream scanning programmatically.
- */
-export function stop_stream_scan() {
-    wasm.stop_stream_scan();
-}
-
-/**
- * WASM entry point
- */
-export function main_js() {
-    wasm.main_js();
-}
 
 function takeFromExternrefTable0(idx) {
     const value = wasm.__wbindgen_externrefs.get(idx);
@@ -185,23 +172,10 @@ export function init_scanner() {
 }
 
 /**
- * Initializes the reader module. Must be called before using `read_from_image`.
+ * Stops the stream scanning programmatically.
  */
-export function init_reader() {
-    const ret = wasm.init_reader();
-    if (ret[1]) {
-        throw takeFromExternrefTable0(ret[0]);
-    }
-}
-
-/**
- * Triggers the file input dialog to read an image file.
- */
-export function read_from_image() {
-    const ret = wasm.read_from_image();
-    if (ret[1]) {
-        throw takeFromExternrefTable0(ret[0]);
-    }
+export function stop_stream_scan() {
+    wasm.stop_stream_scan();
 }
 
 /**
@@ -221,11 +195,46 @@ export function start_stream_scan(video_element_id) {
 }
 
 /**
+ * Initializes the reader module. Must be called before using `read_from_image`.
+ */
+export function init_reader() {
+    const ret = wasm.init_reader();
+    if (ret[1]) {
+        throw takeFromExternrefTable0(ret[0]);
+    }
+}
+
+/**
+ * WASM entry point
+ */
+export function main_js() {
+    wasm.main_js();
+}
+
+/**
+ * Triggers the file input dialog to read an image file.
+ */
+export function read_from_image() {
+    const ret = wasm.read_from_image();
+    if (ret[1]) {
+        throw takeFromExternrefTable0(ret[0]);
+    }
+}
+
+/**
  * @returns {any}
  */
 export function error_codes() {
     const ret = wasm.error_codes();
     return ret;
+}
+
+/**
+ * Registers a callback function to be called when scanning stops.
+ * @param {Function} cb
+ */
+export function on_stop(cb) {
+    wasm.on_stop(cb);
 }
 
 /**
@@ -249,24 +258,16 @@ export function on_detect(cb) {
     wasm.on_detect(cb);
 }
 
-/**
- * Registers a callback function to be called when scanning stops.
- * @param {Function} cb
- */
-export function on_stop(cb) {
-    wasm.on_stop(cb);
-}
-
-function wasm_bindgen__convert__closures_____invoke__h9daae113a36efd05(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h9daae113a36efd05(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h01c5332dd89e1d58(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h01c5332dd89e1d58(arg0, arg1, arg2);
 }
 
 function wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2) {
     wasm.wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2);
 }
 
-function wasm_bindgen__convert__closures_____invoke__h2a56d65af659e530(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h2a56d65af659e530(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__hd3b7c3a367aa64df(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__hd3b7c3a367aa64df(arg0, arg1, arg2);
 }
 
 const EXPECTED_RESPONSE_TYPES = new Set(['basic', 'cors', 'default']);
@@ -668,7 +669,7 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbindgen_cast_851fe432511a5905 = function(arg0, arg1) {
         // Cast intrinsic for `Closure(Closure { dtor_idx: 305, function: Function { arguments: [F64], shim_idx: 308, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-        const ret = makeMutClosure(arg0, arg1, wasm.wasm_bindgen__closure__destroy__h5d19a6ca87d64903, wasm_bindgen__convert__closures_____invoke__h2a56d65af659e530);
+        const ret = makeMutClosure(arg0, arg1, wasm.wasm_bindgen__closure__destroy__h638e1fb9670fe8da, wasm_bindgen__convert__closures_____invoke__hd3b7c3a367aa64df);
         return ret;
     };
     imports.wbg.__wbindgen_cast_d6cd19b81560fd6e = function(arg0) {
@@ -678,7 +679,7 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbindgen_cast_db8d30182c91f23b = function(arg0, arg1) {
         // Cast intrinsic for `Closure(Closure { dtor_idx: 305, function: Function { arguments: [NamedExternref("Event")], shim_idx: 306, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-        const ret = makeMutClosure(arg0, arg1, wasm.wasm_bindgen__closure__destroy__h5d19a6ca87d64903, wasm_bindgen__convert__closures_____invoke__h9daae113a36efd05);
+        const ret = makeMutClosure(arg0, arg1, wasm.wasm_bindgen__closure__destroy__h638e1fb9670fe8da, wasm_bindgen__convert__closures_____invoke__h01c5332dd89e1d58);
         return ret;
     };
     imports.wbg.__wbindgen_init_externref_table = function() {
