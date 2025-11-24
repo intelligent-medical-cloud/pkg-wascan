@@ -1,10 +1,15 @@
 # wascan
 
+[![crates.io](https://img.shields.io/crates/v/wascan.svg)](https://crates.io/crates/wascan)
+[![docs.rs](https://docs.rs/wascan/badge.svg)](https://docs.rs/wascan)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE-APACHE)
+[![Downloads](https://img.shields.io/crates/d/wascan.svg)](https://crates.io/crates/wascan)
+
 A WebAssembly barcode scanning library for the browser, built with Rust and wasm-bindgen.
 
 ## Features
 
-- 🎯 **Barcode & QR Code Scanning** - By default **UPC-A** and **QR Code** formats are included in the compiled wasm
+- 🎯 **Barcode & QR Code Scanning** - By default only **UPC-A** and **QR Code** are included in the compiled wasm
 - 📷 **Camera Stream Support** - Real-time scanning from webcam/camera streams
 - 🖼️ **Image File Support** - Scan barcodes from uploaded image files
 - ⚡ **WebAssembly** - Fast, native performance in the browser
@@ -180,27 +185,13 @@ This crate is designed to be compiled to WebAssembly. Use the provided Makefile:
 make build
 ```
 
-Or manually:
-
-```bash
-wasm-pack build --target web --out-dir pkg
-```
-
 ## Try the Demo
 
 A working demo is included in the `demo/` directory. To run it:
 
-1. **Build the WebAssembly package:**
-
-   ```bash
-   make build
-   ```
-
-2. **Start the demo server:**
-
-   ```bash
-   make demo
-   ```
+```bash
+make demo
+```
 
 3. **Open your browser:**
    - Navigate to `http://localhost:8000/demo`
@@ -217,7 +208,7 @@ The demo includes:
 ## Requirements
 
 - Rust toolchain
-- `wasm-bindgen-cli` for building WebAssembly packages (install via `cargo install wasm-bindgen-cli`)
+- `wasm-bindgen-cli` and `wasm32-unknown-unknown` for building WebAssembly packages (install via `make init`)
 - Python 3 (for the demo server, or use any static file server)
 - Modern browser with WebAssembly and WebRTC support (for camera functionality)
 
