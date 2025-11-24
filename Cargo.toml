@@ -7,7 +7,7 @@ repository = "https://github.com/intelligent-medical-cloud/pkg-wascan"
 documentation = "https://docs.rs/wascan"
 license = "Apache-2.0"
 authors = ["Intelligent Medical Cloud Inc."]
-keywords = ["barcode", "upc", "ean", "qr-code", "scanner", "webcam"]
+keywords = ["barcode", "upc", "ean", "qrcode", "scanner"]
 categories = ["wasm", "multimedia", "web-programming"]
 exclude = ["target/", "pkg/", "test/"]
 
