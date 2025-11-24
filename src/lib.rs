@@ -6,6 +6,9 @@ mod scanner;
 
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 
+// Re-export event callbacks for documentation
+pub use event::{on_detect, on_start, on_stop};
+
 /// WASM entry point
 #[wasm_bindgen(start)]
 pub fn main_js() {

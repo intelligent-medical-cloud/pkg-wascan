@@ -13,9 +13,9 @@ build: lint
 	cargo build --release --target wasm32-unknown-unknown
 	wasm-bindgen --target web --out-dir pkg target/wasm32-unknown-unknown/release/wascan.wasm
 
-test: build
-	@echo "Starting local server at http://localhost:8000/test"
+demo: build
+	@echo "Starting local server at http://localhost:8000/demo"
 	python3 -m http.server
 	
 
-.PHONY: init lib-upd lint build test
+.PHONY: init lib-upd lint build demo

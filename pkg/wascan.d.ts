@@ -1,12 +1,9 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Starts the stream-based barcode scanning from the camera.
- *
- * ## Arguments
- * * `video_element_id` - The ID of the video element in the DOM where the stream will be displayed
+ * Stops the stream scanning programmatically.
  */
-export function start_stream_scan(video_element_id: string): void;
+export function stop_stream_scan(): void;
 /**
  * WASM entry point
  */
@@ -16,22 +13,25 @@ export function main_js(): void;
  */
 export function init_scanner(): void;
 /**
- * Triggers the file input dialog to read an image file.
- */
-export function read_from_image(): void;
-/**
  * Initializes the reader module. Must be called before using `read_from_image`.
  */
 export function init_reader(): void;
 /**
- * Stops the stream scanning programmatically.
+ * Triggers the file input dialog to read an image file.
  */
-export function stop_stream_scan(): void;
+export function read_from_image(): void;
+/**
+ * Starts the stream-based barcode scanning from the camera.
+ *
+ * ## Arguments
+ * * `video_element_id` - The ID of the video element in the DOM where the stream will be displayed
+ */
+export function start_stream_scan(video_element_id: string): void;
 export function error_codes(): any;
 /**
- * Registers a callback function to be called when scanning stops.
+ * Registers a callback function to be called when scanning starts.
  */
-export function on_stop(cb: Function): void;
+export function on_start(cb: Function): void;
 /**
  * Registers a callback function to be called when a barcode is detected.
  *
@@ -42,9 +42,9 @@ export function on_stop(cb: Function): void;
  */
 export function on_detect(cb: Function): void;
 /**
- * Registers a callback function to be called when scanning starts.
+ * Registers a callback function to be called when scanning stops.
  */
-export function on_start(cb: Function): void;
+export function on_stop(cb: Function): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -62,9 +62,9 @@ export interface InitOutput {
   readonly on_stop: (a: any) => void;
   readonly wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b: (a: number, b: number, c: any) => void;
   readonly wasm_bindgen__closure__destroy__hd1614e8a7e4ac567: (a: number, b: number) => void;
-  readonly wasm_bindgen__convert__closures_____invoke__h8149a65cd856fbde: (a: number, b: number, c: any) => void;
-  readonly wasm_bindgen__closure__destroy__h5a2b013014e66453: (a: number, b: number) => void;
-  readonly wasm_bindgen__convert__closures_____invoke__hf79ceb4f2813a00e: (a: number, b: number, c: number) => void;
+  readonly wasm_bindgen__convert__closures_____invoke__h9daae113a36efd05: (a: number, b: number, c: any) => void;
+  readonly wasm_bindgen__closure__destroy__h5d19a6ca87d64903: (a: number, b: number) => void;
+  readonly wasm_bindgen__convert__closures_____invoke__h2a56d65af659e530: (a: number, b: number, c: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_exn_store: (a: number) => void;

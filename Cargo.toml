@@ -1,12 +1,15 @@
 [package]
 name = "wascan"
-version = "0.1.0"
+version = "0.1.2"
 edition = "2024"
-description = "BarCode scanning library for WebAssembly"
+description = "BarCode scanning library in WebAssembly"
 repository = "https://github.com/intelligent-medical-cloud/pkg-wascan"
-license = "Private"
-publish = false
-exclude = ["target/", "pkg/"]
+documentation = "https://docs.rs/wascan"
+license = "Apache-2.0"
+authors = ["Intelligent Medical Cloud Inc."]
+keywords = ["barcode", "upc", "ean", "qr-code", "scanner", "webassembly", "wasm", "rxing"]
+categories = ["wasm", "multimedia", "web-programming"]
+exclude = ["target/", "pkg/", "test/"]
 
 
 [lib]

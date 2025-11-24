@@ -21,6 +21,7 @@ init()
         on_detect((result) => {
             if (result.success) {
                 console.log(result.value)
+                alert(result.value)
             } else {
                 console.error(result.error)
             }
