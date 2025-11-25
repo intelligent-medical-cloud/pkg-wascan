@@ -1,6 +1,6 @@
 {
   "name": "wascan",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Production-ready barcode and QR code scanner for web browsers. Handles camera access, streaming, and file input automatically. Works across all modern browsers and platforms. Built with Rust and WebAssembly.",
   "type": "module",
   "main": "wascan.js",

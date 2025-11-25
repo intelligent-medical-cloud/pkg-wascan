@@ -21,6 +21,7 @@ demo: build
 
 publish-npm: build
 	@cp README.md pkg/README.md
+	@cp package.json pkg/package.json
 	@cd pkg && npm publish
 
 publish-cargo: build
