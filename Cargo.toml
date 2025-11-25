@@ -1,6 +1,6 @@
 [package]
 name = "wascan"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2024"
 description = "Production-ready barcode and QR code scanner for web browsers. Handles camera access, streaming, and file input automatically."
 repository = "https://github.com/intelligent-medical-cloud/pkg-wascan"
