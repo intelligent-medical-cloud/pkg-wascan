@@ -53,6 +53,8 @@ For JavaScript/TypeScript projects using npm, the package is ready to use. For R
 
 ### JavaScript/TypeScript
 
+#### Basic Usage (Simple HTML/No Bundler)
+
 ```javascript
 import init, {
   init_reader,
@@ -65,7 +67,7 @@ import init, {
   on_stop,
 } from "wascan";
 
-// Initialize the WASM module
+// Initialize the WASM module (automatic path resolution)
 await init();
 
 // Initialize the reader and scanner modules
@@ -99,10 +101,87 @@ read_from_image();
 stop_stream_scan();
 ```
 
+#### Usage with Bundlers (Vite, Webpack, etc.)
+
+When using bundlers like Vite or Webpack, you may need to explicitly specify the WASM file path.
+
+```javascript
+import init, {
+  init_reader,
+  init_scanner,
+  read_from_image,
+  start_stream_scan,
+  stop_stream_scan,
+  on_detect,
+  on_start,
+  on_stop,
+} from "wascan";
+
+// For Vite: Import WASM as URL
+import wasmUrl from "wascan/wascan_bg.wasm?url";
+
+// For other bundlers: Construct URL explicitly
+const wasmUrl = new URL("wascan/wascan_bg.wasm", import.meta.url);
+
+// Initialize with explicit WASM path (object format)
+await init({ module_or_path: wasmUrl });
+
+// ... rest of initialization code
+```
+
+#### Vue.js Example
+
+```javascript
+import { onMounted, onBeforeUnmount } from "vue";
+import init, {
+  init_reader,
+  init_scanner,
+  start_stream_scan,
+  stop_stream_scan,
+  on_detect,
+  on_start,
+  on_stop,
+} from "wascan";
+
+// For Vite
+import wasmUrl from "wascan/wascan_bg.wasm?url";
+
+// For other bundlers
+// const wasmUrl = new URL("wascan/wascan_bg.wasm", import.meta.url);
+
+onMounted(async () => {
+  try {
+    await init({ module_or_path: wasmUrl });
+    init_reader();
+    init_scanner();
+
+    on_start(() => console.log("Scanning started"));
+    on_detect((result) => {
+      if (result.success) {
+        console.log("Detected:", result.value);
+      }
+    });
+    on_stop(() => console.log("Scanning stopped"));
+
+    start_stream_scan("video-element-id");
+  } catch (error) {
+    console.error("Failed to initialize:", error);
+  }
+});
+
+onBeforeUnmount(() => {
+  stop_stream_scan();
+});
+```
+
 ## API
 
 ### Initialization
 
+- `init(module_or_path?)` - Initializes the WASM module
+  - Optional parameter: `{ module_or_path: string | URL }` - Explicit path to WASM file
+  - If not provided, automatically resolves to `wascan_bg.wasm` relative to the module
+  - Returns a Promise that resolves when WASM is loaded
 - `init_reader()` - Initializes the reader module (required before using `read_from_image`)
 - `init_scanner()` - Initializes the scanner module (required before using `start_stream_scan`)
 
@@ -220,6 +299,8 @@ make demo
 - Click "Start Stream Scan" to scan from your camera
 - Or click "Read From Image" to upload and scan an image file
 - Detected barcodes will appear in an alert and the browser console
+
+**Note**: The demo uses the local `pkg/` directory. For npm package usage examples, see the [Usage](#usage) section above.
 
 ## Browser & Platform Support
 
