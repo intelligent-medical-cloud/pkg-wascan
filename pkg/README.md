@@ -9,11 +9,10 @@ A **production-ready, plug-and-play** WebAssembly barcode scanning library for t
 
 ## Features
 
-- ✅ **Production Ready** - Plug-and-play solution, ready for production use
 - 🎯 **Barcode & QR Code Scanning** - By default only **UPC-A** and **QR Code** are included in the compiled wasm
-- 📷 **Automatic Camera Handling** - Camera access and streaming handled automatically with optimal configurations applied - no manual camera setup required
-- 🖼️ **Built-in File Input** - File input field creation and handling managed by the library - just call the function
-- 🌐 **Universal Browser Support** - Works on all modern browsers and platforms including iOS, Android, Safari, Chrome, Firefox, and Edge
+- 📷 **Automatic Camera Handling** - Camera access and streaming handled automatically with optimal configurations applied
+- 🖼️ **Built-in File Input** - File input field creation and handling managed by the library
+- 🌐 **Universal Browser Support** - Works on all modern browsers and platforms (iOS, Android, Safari, Chrome, Firefox, and Edge)
 - ⚡ **WebAssembly** - Fast, native performance in the browser
 - 🚀 **High Performance** - Very high accuracy with low latency (typically under 0.2ms per detection)
 - 🔧 **Easy Integration** - Simple JavaScript API
@@ -122,7 +121,7 @@ stop_stream_scan();
 
 ## Supported Formats
 
-**wascan** is built on top of the [Rxing](https://github.com/username/rxing) library (Rust port of ZXing), which supports a wide range of barcode formats. However, **the built binary only includes UPC-A and QR Code** to keep the WebAssembly bundle size minimal.
+**wascan** is built on top of the [Rxing](https://github.com/rxing-core/rxing) library (Rust port of ZXing), which supports a wide range of barcode formats. However, **the built binary only includes UPC-A and QR Code** to keep the WebAssembly bundle size minimal.
 
 ### Formats Supported by Rxing/ZXing
 
@@ -207,27 +206,7 @@ This crate is designed to be compiled to WebAssembly. Use the provided Makefile:
 make build
 ```
 
-This will generate the WebAssembly files in the `pkg/` directory, which are ready for:
-
-- npm publishing (package.json is included)
-- Direct use in web projects
-- Integration into bundlers (webpack, vite, etc.)
-
-### Publishing to npm
-
-To publish the package to npm:
-
-1. **Ensure version is synced**: Make sure `pkg/package.json` version matches `Cargo.toml` version
-2. **Build the package**: Run `make build`
-3. **Publish**: From the `pkg/` directory, run `npm publish`
-
-Or use the convenience command:
-
-```bash
-make publish-npm
-```
-
-**Note**: You need to be logged in to npm (`npm login`) and have publish permissions for the `wascan` package name.
+This will generate ready to use WebAssembly files in the `pkg/` directory.
 
 ## Try the Demo
 
@@ -241,12 +220,6 @@ make demo
 - Click "Start Stream Scan" to scan from your camera
 - Or click "Read From Image" to upload and scan an image file
 - Detected barcodes will appear in an alert and the browser console
-
-The demo includes:
-
-- Real-time camera scanning
-- Image file upload scanning
-- Event callbacks demonstration
 
 ## Browser & Platform Support
 
@@ -268,6 +241,6 @@ No platform-specific code needed - the library handles all browser differences a
 
 ## License
 
-Licensed under the Apache License, Version 2.0. See [LICENSE-APACHE](LICENSE-APACHE) for details.
+Licensed under the Apache License, Version 2.0. See [LICENSE-APACHE](LICENSE-APACHE.md) for details.
 
-This project builds upon the open-source [Rxing](https://github.com/username/rxing) project, which is also licensed under Apache 2.0.
+This project builds upon the open-source [Rxing](https://github.com/rxing-core/rxing) project, which is also licensed under Apache 2.0.

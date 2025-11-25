@@ -257,16 +257,16 @@ export function on_detect(cb) {
     wasm.on_detect(cb);
 }
 
-function wasm_bindgen__convert__closures_____invoke__h66c325097dcb36e0(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__h66c325097dcb36e0(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2);
 }
 
 function wasm_bindgen__convert__closures_____invoke__hb94288fd6ffe286a(arg0, arg1, arg2) {
     wasm.wasm_bindgen__convert__closures_____invoke__hb94288fd6ffe286a(arg0, arg1, arg2);
 }
 
-function wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures_____invoke__had67db21a2959b7b(arg0, arg1, arg2);
+function wasm_bindgen__convert__closures_____invoke__h66c325097dcb36e0(arg0, arg1, arg2) {
+    wasm.wasm_bindgen__convert__closures_____invoke__h66c325097dcb36e0(arg0, arg1, arg2);
 }
 
 const EXPECTED_RESPONSE_TYPES = new Set(['basic', 'cors', 'default']);
