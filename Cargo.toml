@@ -1,6 +1,6 @@
 [package]
 name = "wascan"
-version = "0.1.8"
+version = "0.1.9"
 edition = "2024"
 description = "Production-ready barcode and QR code scanner for web browsers. Handles camera access, streaming, and file input automatically."
 repository = "https://github.com/intelligent-medical-cloud/pkg-wascan"
@@ -14,16 +14,16 @@ exclude = ["target/", "pkg/", "test/"]
 crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = "0.2.105"
-wasm-bindgen-futures = "0.4.55"
-js-sys = "0.3.82"
+wasm-bindgen = "0.2.106"
+wasm-bindgen-futures = "0.4.56"
+js-sys = "0.3.83"
 console_error_panic_hook = "0.1.7"
 image = { version = "0.25.9", default-features = true }
-rxing = { version = "0.8.2", features = ["wasm_support"] }
+rxing = { version = "0.8.3", features = ["wasm_support"] }
 thiserror = "2.0.17"
 
 [dependencies.web-sys]
-version = "0.3.82"
+version = "0.3.83"
 features = [
     "Document",
     "Event",

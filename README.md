@@ -4,8 +4,6 @@
 [![crates.io](https://img.shields.io/crates/v/wascan.svg)](https://crates.io/crates/wascan)
 [![license](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE-APACHE)
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/dave.imc)
-
 A **production-ready, plug-and-play** WebAssembly barcode scanning library for the browser, built with Rust and wasm-bindgen. **wascan** handles all the complexity of camera access, streaming, and file input automatically - just integrate and start scanning.
 
 ## Features
@@ -45,7 +43,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-wascan = "0.1.8"
+wascan = "0.1.9"
 ```
 
 For JavaScript/TypeScript projects using npm, the package is ready to use. For Rust projects or custom builds, see the [Build](#build) section below.
@@ -320,10 +318,6 @@ No platform-specific code needed - the library handles all browser differences a
 - `wasm-bindgen-cli` and `wasm32-unknown-unknown` for building WebAssembly packages (install via `make init`)
 - Python 3 (for the demo server, or use any static file server)
 - Modern browser with WebAssembly and WebRTC support (for camera functionality)
-
-## Supporting wascan?
-
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/dave.imc)
 
 ## License
 
