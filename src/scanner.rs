@@ -260,7 +260,10 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
             };
 
             match ctx_result {
-                Some(ctx) => ctx,
+                Some(ctx) => {
+                    ctx.set_image_smoothing_enabled(true);
+                    ctx
+                }
                 None => {
                     STREAMING.with(|s| s.set(false));
                     handle_detection_error(Error::Internal);
@@ -307,6 +310,17 @@ pub fn start_stream_scan(video_element_id: &str) -> Result<(), JsValue> {
 
             let vw = video_for_raf.video_width();
             let vh = video_for_raf.video_height();
+
+            if vw == 0 || vh == 0 {
+                if let Some(cb) = raf_cb2.borrow().as_ref() {
+                    window
+                        .request_animation_frame(cb.as_ref().unchecked_ref())
+                        .ok();
+                }
+
+                return;
+            }
+
             canvas.set_width(vw);
             canvas.set_height(vh);
 

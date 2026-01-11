@@ -20,7 +20,7 @@ use crate::{
 const MIN_IMAGE_DIMENSION: u32 = 60;
 const OPTIMAL_IMAGE_DIMENSION: u32 = 1200;
 const IMAGE_CROP_FACTOR: u32 = 2;
-const STREAM_CROP_FACTOR: u32 = 3;
+const STREAM_CROP_FACTOR: u32 = 2;
 
 fn prepare_image_data(image: &GrayImage, width: u32, height: u32) -> (Vec<u8>, u32, u32) {
     if width > OPTIMAL_IMAGE_DIMENSION || height > OPTIMAL_IMAGE_DIMENSION {
